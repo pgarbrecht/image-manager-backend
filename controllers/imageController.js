@@ -1,4 +1,5 @@
-const db = require('../models')
+const db = require('../models');
+const imgbbUploader = require("imgbb-uploader");
 
 // This route returns list of all product objects
 const index = (req, res) => {
@@ -48,9 +49,29 @@ const destroy = (req, res) => {
     })
 }
 
+//route for posting images
+const upload = (req, res) => {
+    console.log("reached /imageupload endpoint");
+    const options = {
+      apiKey: "f30d5aa2335f24a540d204cd3ca82e82", // MANDATORY apikey for imgBB
+      base64string: req.body.base64string,
+      // OPTIONAL: pass base64-encoded image (max 32Mb)
+    };
+    imgbbUploader(options)
+      .then((response) => {
+        console.log(response);
+        return res.status(200).json({
+          message: "Uploaded image successfully",
+          image: response.url,
+        });
+      })
+      .catch((error) => console.error(error));
+}
+
 module.exports = {
     index,
     create,
     update,
     destroy,
+    upload
 }
